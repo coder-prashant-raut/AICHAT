@@ -1,0 +1,26 @@
+@import "tailwindcss";
+/* Custom Scrollbar for Chat Container */
+.chat-container {
+  overflow-y: auto;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #4B5563 #1F2937; /* Thumb & Track color */
+}
+
+/* Webkit Browsers (Chrome, Edge, Safari) */
+.chat-container::-webkit-scrollbar {
+  width: 6px; /* Thin scrollbar */
+}
+
+.chat-container::-webkit-scrollbar-track {
+  background: #1F2937; /* Dark track */
+  border-radius: 10px;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+  background: #4B5563; /* Gray thumb */
+  border-radius: 10px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover {
+  background: #6B7280; /* Lighter on hover */
+}
