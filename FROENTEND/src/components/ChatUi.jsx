@@ -1,11 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+
+
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef(null);
+
+console.log("API Key:", apiKey)
+
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -25,7 +31,7 @@ const Chatbot = () => {
         method: "POST",
         headers: {
          
-            "Authorization": "Bearer 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",
+            "Authorization": `Bearer ${apiKey}`,
 
           "HTTP-Referer": "https://marathibatmya.in/",
           "X-Title": "Prashant",
