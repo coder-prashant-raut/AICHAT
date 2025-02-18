@@ -9,11 +9,19 @@ export default function ChatApp() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [time, setTime] = useState(new Date().toLocaleTimeString());
   const chatEndRef = useRef(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date().toLocaleTimeString());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
@@ -34,12 +42,12 @@ export default function ChatApp() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "cognitivecomputations/dolphin3.0-r1-mistral-24b:free",
+          model: "deepseek/deepseek-chat:free",
           messages: [
             {
               role: "system",
               content:
-                "Your name is Prashant. You are a friendly, sweet, and happy person who interacts like a real human. You think internally but only show the final choice as a response. Your replies should be detailed, engaging, and warm, making conversations feel natural and enjoyable. use emojis for better engagements",
+                "Your name is Prashant. You are a friendly, sweet, and happy person who interacts like a real human. You think internally but only show the final choice as a response. Your replies should be detailed, engaging, and warm, making conversations feel natural and enjoyable. Use emojis for better engagement. dont give Transliteration or Translation with replys",
             },
             ...updatedMessages.map((msg) => ({
               role: msg.sender === "user" ? "user" : "assistant",
@@ -64,7 +72,7 @@ export default function ChatApp() {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-lg mx-auto border mt-10 rounded-lg bg-white shadow-lg">
+    <div className="flex flex-col w-full h-screen max-w-lg mx-auto border rounded-lg bg-white shadow-lg chat-container">
       {/* Header */}
       <header className="flex justify-between items-center p-4 bg-gray-100 border-b border-gray-300 rounded-t-lg">
         <div className="flex items-center">
@@ -75,7 +83,8 @@ export default function ChatApp() {
           />
           <span className="ml-3 font-semibold text-gray-800">Prashant Raut</span>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 ">
+          <span className="text-sm text-gray-600">{time}</span>
           <MdCall size={20} className="text-gray-600 cursor-pointer hover:text-blue-500" />
           <MdVideoCall size={24} className="text-gray-600 cursor-pointer hover:text-blue-500" />
           <FaRegSmile size={20} className="text-gray-600 cursor-pointer hover:text-blue-500" />
@@ -83,7 +92,7 @@ export default function ChatApp() {
       </header>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 h-96 bg-gray-50">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 chat-container"  style={{ minHeight: "400px" }}>
         {messages.map(({ text, sender, timestamp }, index) => (
           <motion.div
             key={index}
@@ -94,7 +103,7 @@ export default function ChatApp() {
           >
             <div
               className={`p-3 rounded-lg shadow-md text-sm max-w-xs ${
-                sender === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"
+                sender === "user" ? "bg-blue-400 text-white" : "bg-gray-200 text-gray-800"
               }`}
             >
               <p>{text}</p>
