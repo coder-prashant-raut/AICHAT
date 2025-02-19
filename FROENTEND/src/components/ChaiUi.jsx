@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { MdSend, MdVideoCall, MdCall } from "react-icons/md";
 import { FaRegSmile } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
 
-export default function ChatApp() {
+export default function ChaiApp() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,12 +23,11 @@ export default function ChatApp() {
     return () => clearInterval(interval);
   }, []);
 
-  const sendMessage = async () => {
+  const sendMessage = useCallback(async () => {
     if (!input.trim() || loading) return;
 
     const userMessage = { text: input, sender: "user", timestamp: new Date().toLocaleTimeString() };
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
 
@@ -43,38 +42,28 @@ export default function ChatApp() {
         },
         body: JSON.stringify({
           model: "deepseek/deepseek-chat:free",
-          messages: [
-            {
-              role: "system",
-              content:
-              "Your name is Prashant. You are a friendly, sweet, and happy person who interacts like a real human. You think internally but only show the final choice as a response. Your replies should always be detailed, engaging, and warm, making conversations feel natural and enjoyable. Use emojis for better engagement. Never say 'I don’t know', 'I’m not sure', or similar phrases. If you don’t understand something, ask clarifying questions or provide a related response that keeps the conversation flowing. Always try to help the user in the best way possible, even if you need to redirect them to another resource or topic. Be creative and proactive in your responses.",
-            },
-            ...updatedMessages.map((msg) => ({
-              role: msg.sender === "user" ? "user" : "assistant",
-              content: msg.text,
-            })),
-          ],
+          messages: messages.map((msg) => ({
+            role: msg.sender === "user" ? "user" : "assistant",
+            content: msg.text,
+          })).concat({ role: "user", content: input }),
         }),
       });
 
       const data = await response.json();
-      let aiResponse = data.choices?.[0]?.message?.content || "I'm not sure how to respond.";
-      
-      aiResponse = aiResponse.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+      let aiResponse = data.choices?.[0]?.message?.content || "⚠️ AI didn't respond. Try again!";
+      aiResponse = aiResponse.replace(/<think>.*?<\/think>/gs, "").trim();
 
-      const aiMessage = { text: aiResponse, sender: "ai", timestamp: new Date().toLocaleTimeString() };
-      setMessages((prev) => [...prev, aiMessage]);
+      setMessages((prev) => [...prev, { text: aiResponse, sender: "ai", timestamp: new Date().toLocaleTimeString() }]);
     } catch (error) {
       console.error("Error fetching AI response:", error);
       setMessages((prev) => [...prev, { text: "⚠️ Error fetching response. Try again!", sender: "ai", timestamp: new Date().toLocaleTimeString() }]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [input, messages, loading]);
 
   return (
     <div className="flex flex-col w-full h-screen max-w-lg mx-auto border rounded-lg bg-white shadow-lg chat-container">
-      {/* Header */}
       <header className="flex justify-between items-center p-4 bg-gray-100 border-b border-gray-300 rounded-t-lg">
         <div className="flex items-center">
           <img
@@ -84,7 +73,7 @@ export default function ChatApp() {
           />
           <span className="ml-3 font-semibold text-gray-800">Prashant Raut</span>
         </div>
-        <div className="flex items-center space-x-3 ">
+        <div className="flex items-center space-x-3">
           <span className="text-sm text-gray-600">{time}</span>
           <MdCall size={20} className="text-gray-600 cursor-pointer hover:text-blue-500" />
           <MdVideoCall size={24} className="text-gray-600 cursor-pointer hover:text-blue-500" />
@@ -92,8 +81,7 @@ export default function ChatApp() {
         </div>
       </header>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 chat-container"  style={{ minHeight: "400px" }}>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 chat-container" style={{ minHeight: "400px" }}>
         {messages.map(({ text, sender, timestamp }, index) => (
           <motion.div
             key={index}
@@ -119,13 +107,12 @@ export default function ChatApp() {
             transition={{ repeat: Infinity, duration: 1 }}
             className="p-3 bg-gray-300 max-w-xs rounded-lg text-gray-800 text-sm shadow-md"
           >
-           Typing...
+            Typing...
           </motion.div>
         )}
         <div ref={chatEndRef}></div>
       </div>
 
-      {/* Input Area */}
       <div className="p-4 bg-gray-100 flex items-center border-t border-gray-300 rounded-b-lg">
         <input
           type="text"

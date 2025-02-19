@@ -1,7 +1,17 @@
 @import "tailwindcss";
 
-/* सर्व ब्राउझरसाठी स्क्रोलबार */
+
 .chat-container {
   scrollbar-width: thin; /* पातळ स्क्रोलबार */
   scrollbar-color: #40669b #1F2937; /* थंब आणि ट्रॅक रंग */
+}
+
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+h1, h2, h3, p {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
 }
