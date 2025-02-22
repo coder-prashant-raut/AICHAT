@@ -73,9 +73,9 @@ export default function ChatApp() {
   };
 
   return (
-    <div className="flex flex-col w-full h-screen max-w-lg mx-auto border rounded-lg bg-white shadow-lg chat-container">
+    <div className="flex flex-col w-full h-svh max-w-lg mx-auto border rounded-lg bg-white shadow-lg chat-container">
       {/* Header */}
-      <header className="flex justify-between items-center p-4 bg-gray-100 border-b border-gray-300 rounded-t-lg">
+      <header className="flex justify-between fixed w-full items-center p-4 bg-gray-100 border-b border-gray-300 rounded-t-lg">
         <div className="flex items-center">
           <img
             src="https://avatars.githubusercontent.com/u/162595999?s=400&u=94658085da622b6ea236bec37bb78d016bc033c3&v=4"
@@ -93,7 +93,7 @@ export default function ChatApp() {
       </header>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 chat-container"  style={{ minHeight: "400px" }}>
+      <div className="flex-1 overflow-y-auto p-4 py-18 space-y-4 bg-gray-50 chat-container"  style={{ minHeight: "400px" }}>
         {messages.map(({ text, sender, timestamp }, index) => (
           <motion.div
             key={index}
@@ -126,7 +126,7 @@ export default function ChatApp() {
       </div>
 
       {/* Input Area */}
-      <div className="p-4 bg-gray-100 flex items-center border-t border-gray-300 rounded-b-lg">
+      <div className="p-2 bg-gray-100 flex items-center border-t border-gray-300 rounded-b-lg">
         <input
           type="text"
           className="flex-1 p-3 rounded-lg border border-gray-300 focus:ring focus:ring-blue-300 outline-none text-gray-800"
