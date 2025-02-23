@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { MdSend, MdVideoCall, MdCall } from "react-icons/md";
-import { FaRegSmile } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
-
 
 const themes = {
   blue: { bg: "bg-blue-200", text: "text-gray-900", primary: "bg-blue-500", input: "border-blue-300" },
@@ -23,6 +21,7 @@ export default function ChatApp() {
 
   const [theme, setTheme] = useState("blue");
 
+ 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -84,77 +83,6 @@ export default function ChatApp() {
   };
 
   return (
-    // <div className="flex flex-col w-dvw h-svh max-w-lg mx-auto border rounded-lg bg-white shadow-lg chat-container">
-    //   {/* Header */}
-    //   <header className="flex justify-between fixed w-full items-center p-4 bg-gray-100 border-b border-gray-300 rounded-t-lg">
-    //     <div className="flex items-center">
-    //       <img
-    //         src="https://avatars.githubusercontent.com/u/162595999?s=400&u=94658085da622b6ea236bec37bb78d016bc033c3&v=4"
-    //         alt="Avatar"
-    //         className="w-10 h-10 object-cover rounded-full"
-    //       />
-    //       <span className="ml-3 font-semibold text-gray-800">Prashant Raut</span>
-    //     </div>
-    //     <div className="flex items-center space-x-3 ">
-    //       <span className="text-sm text-gray-600">{time}</span>
-    //       <MdCall size={20} className="text-gray-600 cursor-pointer hover:text-blue-500" />
-    //       <MdVideoCall size={24} className="text-gray-600 cursor-pointer hover:text-blue-500" />
-    //       <FaRegSmile size={20} className="text-gray-600 cursor-pointer hover:text-blue-500" />
-    //     </div>
-    //   </header>
-
-    //   {/* Messages Area */}
-    //   <div className="flex-1 overflow-y-auto p-4 py-18 space-y-4 bg-gray-50 chat-container"  style={{ minHeight: "400px" }}>
-    //     {messages.map(({ text, sender, timestamp }, index) => (
-    //       <motion.div
-    //         key={index}
-    //         initial={{ opacity: 0, y: 10 }}
-    //         animate={{ opacity: 1, y: 0 }}
-    //         transition={{ duration: 0.3 }}
-    //         className={`flex ${sender === "user" ? "justify-end" : "justify-start"}`}
-    //       >
-    //         <div
-    //           className={`p-3 rounded-lg shadow-md text-sm max-w-xs ${
-    //             sender === "user" ? "bg-blue-400 text-white" : "bg-gray-200 text-gray-800"
-    //           }`}
-    //         >
-    //           <p>{text}</p>
-    //           <small className="block text-right text-xs text-gray-600 mt-1">{timestamp}</small>
-    //         </div>
-    //       </motion.div>
-    //     ))}
-    //     {loading && (
-    //       <motion.div
-    //         initial={{ opacity: 0 }}
-    //         animate={{ opacity: 1 }}
-    //         transition={{ repeat: Infinity, duration: 1 }}
-    //         className="p-3 bg-gray-300 max-w-xs rounded-lg text-gray-800 text-sm shadow-md"
-    //       >
-    //        Typing...
-    //       </motion.div>
-    //     )}
-    //     <div ref={chatEndRef}></div>
-    //   </div>
-
-    //   {/* Input Area */}
-    //   <div className="p-2 bg-gray-100 flex items-center border-t border-gray-300 rounded-b-lg">
-    //     <input
-    //       type="text"
-    //       className="flex-1 p-3 rounded-lg border border-gray-300 focus:ring focus:ring-blue-300 outline-none text-gray-800"
-    //       placeholder="Type a message..."
-    //       value={input}
-    //       onChange={(e) => setInput(e.target.value)}
-    //       onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-    //     />
-    //     <button
-    //       className="ml-2 p-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition disabled:opacity-50"
-    //       onClick={sendMessage}
-    //       disabled={loading}
-    //     >
-    //       <MdSend size={20} />
-    //     </button>
-    //   </div>
-    // </div>
 
     <div className={`flex flex-col w-screen h-screen ${themes[theme].bg} ${themes[theme].text}`}>
     {/* Header - Fixed */}
@@ -176,7 +104,9 @@ export default function ChatApp() {
               theme === t ? "scale-110 border-gray-200" : ""
             }`}
             onClick={() => setTheme(t)}
-          ></div>
+          >
+            
+          </div>
         ))}
       </div>
     </header>

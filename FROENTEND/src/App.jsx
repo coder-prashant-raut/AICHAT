@@ -1,17 +1,14 @@
-
-
-import './App.css'
-import ChatUi from './components/ChatUi'
-
+import "./App.css";
+import ChaiUi from "./components/ChaiUi";
+import ChatUi from "./components/ChatUi";
 
 function App() {
-
   return (
     <>
-      <ChatUi/>
+      {/* <ChatUi /> */}
+      <ChaiUi />
     </>
-  )
+  );
 }
 
-export default App
-
+export default App;

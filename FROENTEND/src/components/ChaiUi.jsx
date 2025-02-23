@@ -1,16 +1,26 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MdSend, MdVideoCall, MdCall } from "react-icons/md";
-import { FaRegSmile } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
 
-export default function ChaiApp() {
+const themes = {
+  blue: { bg: "bg-blue-200", text: "text-gray-900", primary: "bg-blue-500", input: "border-blue-300" },
+  green: { bg: "bg-green-200", text: "text-gray-900", primary: "bg-green-500", input: "border-green-300" },
+  purple: { bg: "bg-purple-200", text: "text-gray-900", primary: "bg-purple-500", input: "border-purple-300" },
+  red: { bg: "bg-red-200", text: "text-gray-900", primary: "bg-red-500", input: "border-red-300" },
+  dark: { bg: "bg-gray-900", text: "text-white", primary: "bg-gray-700", input: "border-gray-600" },
+};
+
+export default function ChaiUi() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [typing, setTyping] = useState(false);
   const [time, setTime] = useState(new Date().toLocaleTimeString());
   const chatEndRef = useRef(null);
+  
+  const [theme, setTheme] = useState("blue");
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -23,13 +33,15 @@ export default function ChaiApp() {
     return () => clearInterval(interval);
   }, []);
 
-  const sendMessage = useCallback(async () => {
+  const sendMessage = async () => {
     if (!input.trim() || loading) return;
 
     const userMessage = { text: input, sender: "user", timestamp: new Date().toLocaleTimeString() };
-    setMessages((prev) => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInput("");
     setLoading(true);
+    setTyping(true);
 
     try {
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -42,91 +54,70 @@ export default function ChaiApp() {
         },
         body: JSON.stringify({
           model: "deepseek/deepseek-chat:free",
-          messages: messages.map((msg) => ({
-            role: msg.sender === "user" ? "user" : "assistant",
-            content: msg.text,
-          })).concat({ role: "user", content: input }),
+          messages: [
+            {
+              role: "system",
+              content:
+              "Your name is Prashant. You are a friendly, sweet, and happy person who interacts like a real human. You think internally but only show the final choice as a response. Your replies should always be detailed, engaging, and warm, making conversations feel natural and enjoyable. Use emojis for better engagement. Never say 'I don’t know', 'I’m not sure', or similar phrases. If you don’t understand something, ask clarifying questions or provide a related response that keeps the conversation flowing. Always try to help the user in the best way possible, even if you need to redirect them to another resource or topic. Be creative and proactive in your responses.",
+            },
+            ...updatedMessages.map((msg) => ({
+              role: msg.sender === "user" ? "user" : "assistant",
+              content: msg.text,
+            })),
+          ],
         }),
       });
 
       const data = await response.json();
-      let aiResponse = data.choices?.[0]?.message?.content || "⚠️ AI didn't respond. Try again!";
-      aiResponse = aiResponse.replace(/<think>.*?<\/think>/gs, "").trim();
+      let aiResponse = data.choices?.[0]?.message?.content || "I'm not sure how to respond.";
+      aiResponse = aiResponse.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
 
-      setMessages((prev) => [...prev, { text: aiResponse, sender: "ai", timestamp: new Date().toLocaleTimeString() }]);
+      const aiMessage = { text: aiResponse, sender: "ai", timestamp: new Date().toLocaleTimeString() };
+      setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       console.error("Error fetching AI response:", error);
       setMessages((prev) => [...prev, { text: "⚠️ Error fetching response. Try again!", sender: "ai", timestamp: new Date().toLocaleTimeString() }]);
     } finally {
       setLoading(false);
+      setTyping(false);
     }
-  }, [input, messages, loading]);
+  };
 
   return (
-    <div className="flex flex-col w-full h-screen max-w-lg mx-auto border rounded-lg bg-white shadow-lg chat-container">
-      <header className="flex justify-between items-center p-4 bg-gray-100 border-b border-gray-300 rounded-t-lg">
+    <div className={`flex flex-col w-screen h-screen ${themes[theme].bg} ${themes[theme].text}`}>
+      <header className={`fixed top-0 w-full p-4 shadow-md flex justify-between items-center ${themes[theme].primary} text-white`}>
         <div className="flex items-center">
-          <img
-            src="https://avatars.githubusercontent.com/u/162595999?s=400&u=94658085da622b6ea236bec37bb78d016bc033c3&v=4"
-            alt="Avatar"
-            className="w-10 h-10 object-cover rounded-full"
-          />
-          <span className="ml-3 font-semibold text-gray-800">Prashant Raut</span>
+          <img src="https://avatars.githubusercontent.com/u/162595999?s=400" alt="Avatar" className="w-10 h-10 rounded-full border-2 border-white" />
+          <span className="ml-3 font-semibold">Prashant Raut</span>
         </div>
-        <div className="flex items-center space-x-3">
-          <span className="text-sm text-gray-600">{time}</span>
-          <MdCall size={20} className="text-gray-600 cursor-pointer hover:text-blue-500" />
-          <MdVideoCall size={24} className="text-gray-600 cursor-pointer hover:text-blue-500" />
-          <FaRegSmile size={20} className="text-gray-600 cursor-pointer hover:text-blue-500" />
+        <div className="flex space-x-2">
+          {Object.keys(themes).map((t) => (
+            <div key={t} className={`w-6 h-6 rounded-full cursor-pointer ${themes[t].primary} border-2 border-white ${theme === t ? "scale-110 border-gray-200" : ""}`} onClick={() => setTheme(t)}></div>
+          ))}
         </div>
       </header>
-
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 chat-container" style={{ minHeight: "400px" }}>
+      <div className="flex-1 overflow-y-auto mt-16 mb-16 p-4 space-y-4">
+        <style>{`::-webkit-scrollbar { display: none; }`}</style>
         {messages.map(({ text, sender, timestamp }, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className={`flex ${sender === "user" ? "justify-end" : "justify-start"}`}
-          >
-            <div
-              className={`p-3 rounded-lg shadow-md text-sm max-w-xs ${
-                sender === "user" ? "bg-blue-400 text-white" : "bg-gray-200 text-gray-800"
-              }`}
-            >
+          <div key={index} className={`flex ${sender === "user" ? "justify-end" : "justify-start"}`}>
+            <div className={`p-3 rounded-2xl shadow-md text-sm max-w-xs ${themes[theme].bg} ${themes[theme].text}`}>
               <p>{text}</p>
-              <small className="block text-right text-xs text-gray-600 mt-1">{timestamp}</small>
+              <small className="block text-right text-xs text-gray-700 mt-1">{timestamp}</small>
             </div>
-          </motion.div>
+          </div>
         ))}
-        {loading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ repeat: Infinity, duration: 1 }}
-            className="p-3 bg-gray-300 max-w-xs rounded-lg text-gray-800 text-sm shadow-md"
-          >
-            Typing...
-          </motion.div>
+        {typing && (
+          <div className="flex justify-start">
+            <div className={`p-3 rounded-2xl shadow-md text-sm max-w-xs ${themes[theme].bg} ${themes[theme].text}`}>
+              <p className="animate-pulse">Typing...</p>
+            </div>
+          </div>
         )}
-        <div ref={chatEndRef}></div>
+        <div ref={chatEndRef} />
       </div>
-
-      <div className="p-4 bg-gray-100 flex items-center border-t border-gray-300 rounded-b-lg">
-        <input
-          type="text"
-          className="flex-1 p-3 rounded-lg border border-gray-300 focus:ring focus:ring-blue-300 outline-none text-gray-800"
-          placeholder="Type a message..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        />
-        <button
-          className="ml-2 p-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition disabled:opacity-50"
-          onClick={sendMessage}
-          disabled={loading}
-        >
+      <div className={`fixed bottom-0 w-full p-3 flex items-center bg-white border-t ${themes[theme].input}`}>
+        <input type="text" className="flex-1 p-3 rounded-full border outline-none shadow-sm" placeholder="Type a message..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && sendMessage()} />
+        <button className={`ml-2 p-3 rounded-full text-white shadow-lg ${themes[theme].primary}`} onClick={sendMessage} disabled={loading}>
           <MdSend size={20} />
         </button>
       </div>
