@@ -5,12 +5,23 @@ import { motion } from "framer-motion";
 
 const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
 
+
+const themes = {
+  blue: { bg: "bg-blue-200", text: "text-gray-900" },
+  green: { bg: "bg-green-200", text: "text-gray-900" },
+  purple: { bg: "bg-purple-200", text: "text-gray-900" },
+  red: { bg: "bg-red-200", text: "text-gray-900" },
+  dark: { bg: "bg-gray-800", text: "text-white" },
+};
+
 export default function ChatApp() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [time, setTime] = useState(new Date().toLocaleTimeString());
   const chatEndRef = useRef(null);
+
+const [theme, setTheme] = useState("blue");
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -73,27 +84,122 @@ export default function ChatApp() {
   };
 
   return (
-    <div className="flex flex-col w-full h-svh max-w-lg mx-auto border rounded-lg bg-white shadow-lg chat-container">
+    // <div className="flex flex-col w-dvw h-svh max-w-lg mx-auto border rounded-lg bg-white shadow-lg chat-container">
+    //   {/* Header */}
+    //   <header className="flex justify-between fixed w-full items-center p-4 bg-gray-100 border-b border-gray-300 rounded-t-lg">
+    //     <div className="flex items-center">
+    //       <img
+    //         src="https://avatars.githubusercontent.com/u/162595999?s=400&u=94658085da622b6ea236bec37bb78d016bc033c3&v=4"
+    //         alt="Avatar"
+    //         className="w-10 h-10 object-cover rounded-full"
+    //       />
+    //       <span className="ml-3 font-semibold text-gray-800">Prashant Raut</span>
+    //     </div>
+    //     <div className="flex items-center space-x-3 ">
+    //       <span className="text-sm text-gray-600">{time}</span>
+    //       <MdCall size={20} className="text-gray-600 cursor-pointer hover:text-blue-500" />
+    //       <MdVideoCall size={24} className="text-gray-600 cursor-pointer hover:text-blue-500" />
+    //       <FaRegSmile size={20} className="text-gray-600 cursor-pointer hover:text-blue-500" />
+    //     </div>
+    //   </header>
+
+    //   {/* Messages Area */}
+    //   <div className="flex-1 overflow-y-auto p-4 py-18 space-y-4 bg-gray-50 chat-container"  style={{ minHeight: "400px" }}>
+    //     {messages.map(({ text, sender, timestamp }, index) => (
+    //       <motion.div
+    //         key={index}
+    //         initial={{ opacity: 0, y: 10 }}
+    //         animate={{ opacity: 1, y: 0 }}
+    //         transition={{ duration: 0.3 }}
+    //         className={`flex ${sender === "user" ? "justify-end" : "justify-start"}`}
+    //       >
+    //         <div
+    //           className={`p-3 rounded-lg shadow-md text-sm max-w-xs ${
+    //             sender === "user" ? "bg-blue-400 text-white" : "bg-gray-200 text-gray-800"
+    //           }`}
+    //         >
+    //           <p>{text}</p>
+    //           <small className="block text-right text-xs text-gray-600 mt-1">{timestamp}</small>
+    //         </div>
+    //       </motion.div>
+    //     ))}
+    //     {loading && (
+    //       <motion.div
+    //         initial={{ opacity: 0 }}
+    //         animate={{ opacity: 1 }}
+    //         transition={{ repeat: Infinity, duration: 1 }}
+    //         className="p-3 bg-gray-300 max-w-xs rounded-lg text-gray-800 text-sm shadow-md"
+    //       >
+    //        Typing...
+    //       </motion.div>
+    //     )}
+    //     <div ref={chatEndRef}></div>
+    //   </div>
+
+    //   {/* Input Area */}
+    //   <div className="p-2 bg-gray-100 flex items-center border-t border-gray-300 rounded-b-lg">
+    //     <input
+    //       type="text"
+    //       className="flex-1 p-3 rounded-lg border border-gray-300 focus:ring focus:ring-blue-300 outline-none text-gray-800"
+    //       placeholder="Type a message..."
+    //       value={input}
+    //       onChange={(e) => setInput(e.target.value)}
+    //       onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+    //     />
+    //     <button
+    //       className="ml-2 p-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition disabled:opacity-50"
+    //       onClick={sendMessage}
+    //       disabled={loading}
+    //     >
+    //       <MdSend size={20} />
+    //     </button>
+    //   </div>
+    // </div>
+
+    <div className="flex justify-center items-center w-screen h-screen bg-gray-100">
+    <div className="w-full max-w-lg h-full md:h-[90vh] flex flex-col bg-white shadow-2xl rounded-xl border overflow-hidden">
+      
       {/* Header */}
-      <header className="flex justify-between fixed w-full items-center p-4 bg-gray-100 border-b border-gray-300 rounded-t-lg">
+      <header className="flex justify-between items-center p-4 bg-blue-500 text-white shadow-md">
         <div className="flex items-center">
           <img
-            src="https://avatars.githubusercontent.com/u/162595999?s=400&u=94658085da622b6ea236bec37bb78d016bc033c3&v=4"
+            src="https://avatars.githubusercontent.com/u/162595999?s=400"
             alt="Avatar"
-            className="w-10 h-10 object-cover rounded-full"
+            className="w-10 h-10 rounded-full border-2 border-white"
           />
-          <span className="ml-3 font-semibold text-gray-800">Prashant Raut</span>
+          <span className="ml-3 font-semibold">Prashant Raut</span>
         </div>
-        <div className="flex items-center space-x-3 ">
-          <span className="text-sm text-gray-600">{time}</span>
-          <MdCall size={20} className="text-gray-600 cursor-pointer hover:text-blue-500" />
-          <MdVideoCall size={24} className="text-gray-600 cursor-pointer hover:text-blue-500" />
-          <FaRegSmile size={20} className="text-gray-600 cursor-pointer hover:text-blue-500" />
+        <div className="flex items-center space-x-3">
+          <span className="text-sm">{time}</span>
+          <MdCall size={20} className="cursor-pointer hover:text-gray-200" />
+          <MdVideoCall size={24} className="cursor-pointer hover:text-gray-200" />
+          {/* Theme Switcher */}
+          <select
+            className="p-2 bg-white text-gray-800 border rounded-md"
+            value={theme}
+            onChange={(e) => setTheme(e.target.value)}
+          >
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+            <option value="purple">Purple</option>
+            <option value="red">Red</option>
+            <option value="dark">Dark Mode</option>
+          </select>
         </div>
       </header>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 py-18 space-y-4 bg-gray-50 chat-container"  style={{ minHeight: "400px" }}>
+      <div
+        className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-4"
+        style={{
+          willChange: "transform",
+          scrollBehavior: "smooth",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
+        <style>{`::-webkit-scrollbar { display: none; }`}</style>
+
         {messages.map(({ text, sender, timestamp }, index) => (
           <motion.div
             key={index}
@@ -103,12 +209,16 @@ export default function ChatApp() {
             className={`flex ${sender === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`p-3 rounded-lg shadow-md text-sm max-w-xs ${
-                sender === "user" ? "bg-blue-400 text-white" : "bg-gray-200 text-gray-800"
+              className={`p-3 rounded-2xl shadow-md text-sm max-w-xs ${
+                sender === "user"
+                  ? `${themes[theme].bg} ${themes[theme].text}`
+                  : "bg-gray-200 text-gray-800"
               }`}
             >
               <p>{text}</p>
-              <small className="block text-right text-xs text-gray-600 mt-1">{timestamp}</small>
+              <small className="block text-right text-xs text-gray-700 mt-1">
+                {timestamp}
+              </small>
             </div>
           </motion.div>
         ))}
@@ -117,26 +227,26 @@ export default function ChatApp() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ repeat: Infinity, duration: 1 }}
-            className="p-3 bg-gray-300 max-w-xs rounded-lg text-gray-800 text-sm shadow-md"
+            className="p-3 bg-gray-300 max-w-xs rounded-2xl text-gray-800 text-sm shadow-md"
           >
-           Typing...
+            Typing...
           </motion.div>
         )}
         <div ref={chatEndRef}></div>
       </div>
 
       {/* Input Area */}
-      <div className="p-2 bg-gray-100 flex items-center border-t border-gray-300 rounded-b-lg">
+      <div className="p-3 bg-white flex items-center border-t border-gray-300">
         <input
           type="text"
-          className="flex-1 p-3 rounded-lg border border-gray-300 focus:ring focus:ring-blue-300 outline-none text-gray-800"
+          className="flex-1 p-3 rounded-full border border-gray-300 focus:ring focus:ring-blue-300 outline-none text-gray-800 shadow-sm"
           placeholder="Type a message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
         <button
-          className="ml-2 p-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition disabled:opacity-50"
+          className="ml-2 p-3 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition disabled:opacity-50"
           onClick={sendMessage}
           disabled={loading}
         >
@@ -144,5 +254,7 @@ export default function ChatApp() {
         </button>
       </div>
     </div>
+  </div>
+    
   );
 }
