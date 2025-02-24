@@ -84,7 +84,7 @@ export default function ChaiUi() {
   };
 
   return (
-    <div className={`flex flex-col w-screen h-screen ${themes[theme].bg} ${themes[theme].text}`}>
+    <div className={`flex flex-col w-screen h-screen  ${themes[theme].bg} ${themes[theme].text}`}>
       <header className={`fixed top-0 w-full p-4 shadow-md flex justify-between items-center ${themes[theme].primary} text-white`}>
         <div className="flex items-center">
           <img src="https://avatars.githubusercontent.com/u/162595999?s=400" alt="Avatar" className="w-10 h-10 rounded-full border-2 border-white" />
@@ -96,7 +96,7 @@ export default function ChaiUi() {
           ))}
         </div>
       </header>
-      <div className="flex-1 overflow-y-auto mt-16 mb-16 p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto mt-16 mb-16 p-4 space-y-4 pt-20">
         <style>{`::-webkit-scrollbar { display: none; }`}</style>
         {messages.map(({ text, sender, timestamp }, index) => (
           <div key={index} className={`flex ${sender === "user" ? "justify-end" : "justify-start"}`}>
@@ -115,12 +115,31 @@ export default function ChaiUi() {
         )}
         <div ref={chatEndRef} />
       </div>
-      <div className={`fixed bottom-0 w-full p-3 flex items-center bg-white border-t ${themes[theme].input}`}>
+      {/* <div className={`fixed bottom-0 w-full p-3 px-4 flex items-center bg-white border-t  ${themes[theme].input}`}>
         <input type="text" className="flex-1 p-3 rounded-full border outline-none shadow-sm" placeholder="Type a message..." value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && sendMessage()} />
         <button className={`ml-2 p-3 rounded-full text-white shadow-lg ${themes[theme].primary}`} onClick={sendMessage} disabled={loading}>
           <MdSend size={20} />
         </button>
-      </div>
+      </div> */}
+
+<div className={`fixed bottom-0 w-full px-4 py-2 flex items-center bg-white border-t ${themes[theme].input}`}>
+  <input 
+    type="text" 
+    className="flex-grow min-w-0 p-2 rounded-full border outline-none shadow-sm" 
+    placeholder="Type a message..." 
+    value={input} 
+    onChange={(e) => setInput(e.target.value)} 
+    onKeyDown={(e) => e.key === "Enter" && sendMessage()} 
+  />
+  <button 
+    className={`ml-2 p-2 sm:p-1 rounded-full text-white shadow-md ${themes[theme].primary}`} 
+    onClick={sendMessage} 
+    disabled={loading}
+  >
+    <MdSend size={20} />
+  </button>
+</div>
+
     </div>
   );
 }
