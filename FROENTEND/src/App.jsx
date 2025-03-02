@@ -7,8 +7,8 @@ function App() {
   return (
     <>
       {/* <ChatUi /> */}
-      {/* <ChaiUi /> */}
-      <WebsiteDownPage/>
+      <ChaiUi />
+      {/* <WebsiteDownPage/> */}
     </>
   );
 }
