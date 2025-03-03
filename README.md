@@ -12,3 +12,6 @@ Aichat Bot is an **AI-powered chat assistant** that acts as a **virtual friend**
 ✔️ **AI-powered responses with natural language processing**  
 ✔️ **Customizable personality & response style**  
 ✔️ **Available as a web app, mobile app.*  
+
+
+contrubute for this project
