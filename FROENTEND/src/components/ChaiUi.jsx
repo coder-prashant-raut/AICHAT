@@ -21,21 +21,21 @@ export default function ChaiUi() {
   const chatEndRef = useRef(null);
   const [theme, setTheme] = useState("blue");
 
-  
-  // Load messages from localStorage when the component mounts
   useEffect(() => {
     const savedMessages = localStorage.getItem("chatHistory");
     if (savedMessages) {
-      setMessages(JSON.parse(savedMessages));
+      setMessages((prev) => JSON.parse(savedMessages)); // Ensures correct state update
     }
   }, []);
+  
+  const updateMessages = (newMessages) => {
+    setMessages(newMessages);
+    localStorage.setItem("chatHistory", JSON.stringify(newMessages)); // Save immediately
+  };
+  
 
-  // Save messages to localStorage whenever they change
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem("chatHistory", JSON.stringify(messages));
-    }
-  }, [messages]);
+
+
 
 
   useEffect(() => {
