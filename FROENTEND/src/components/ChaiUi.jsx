@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { MdSend, MdVideoCall, MdCall } from "react-icons/md";
-import SpeechToText from "./SpeechToText"; // Import the SpeechToText component
 import { motion } from "framer-motion";
 
 const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
@@ -20,8 +19,24 @@ export default function ChaiUi() {
   const [typing, setTyping] = useState(false);
   const [time, setTime] = useState(new Date().toLocaleTimeString());
   const chatEndRef = useRef(null);
-  
   const [theme, setTheme] = useState("blue");
+
+  
+  // Load messages from localStorage when the component mounts
+  useEffect(() => {
+    const savedMessages = localStorage.getItem("chatHistory");
+    if (savedMessages) {
+      setMessages(JSON.parse(savedMessages));
+    }
+  }, []);
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem("chatHistory", JSON.stringify(messages));
+    }
+  }, [messages]);
+
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -84,11 +99,7 @@ export default function ChaiUi() {
     }
   };
 
-  const handleSpeechResult = (transcript) => {
-    setInput(transcript);
-    sendMessage(); // Automatically send the message after speech input
-  };
-
+  
   return (
     <div className={`flex flex-col w-screen h-screen  ${themes[theme].bg} ${themes[theme].text}`}>
       <header className={`fixed top-0 w-full p-4 shadow-md flex justify-between items-center ${themes[theme].primary} text-white`}>
@@ -138,7 +149,6 @@ export default function ChaiUi() {
     onKeyDown={(e) => e.key === "Enter" && sendMessage()} 
   />
 
-<SpeechToText onSpeechResult={handleSpeechResult} /> {/* Add SpeechToText component */}
   <button 
     className={`ml-2 p-2 sm:p-1 rounded-full text-white shadow-md ${themes[theme].primary}`} 
     onClick={sendMessage} 
