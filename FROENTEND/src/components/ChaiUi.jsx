@@ -101,7 +101,9 @@ export default function ChaiUi() {
 
   
   return (
-    <div className={`flex flex-col w-screen h-screen  ${themes[theme].bg} ${themes[theme].text}`}>
+ <div className="max-w-1xl overflow-hidden">
+
+<div className={`flex flex-col w-screen h-screen  ${themes[theme].bg} ${themes[theme].text}`}>
       <header className={`fixed top-0 w-full p-4 shadow-md flex justify-between items-center ${themes[theme].primary} text-white`}>
         <div className="flex items-center">
           <img src="https://avatars.githubusercontent.com/u/162595999?s=400" alt="Avatar" className="w-10 h-10 rounded-full border-2 border-white" />
@@ -159,5 +161,6 @@ export default function ChaiUi() {
 </div>
 
     </div>
+ </div>
   );
 }
